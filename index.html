@@ -4,836 +4,188 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VitalClock - Gerenciador de Tempo de Vida</title>
+    <meta name="description" content="Descubra como seus hábitos impactam sua expectativa de vida">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.5); }
-            50% { box-shadow: 0 0 40px rgba(34, 197, 94, 0.8); }
-        }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.5); } 50% { box-shadow: 0 0 40px rgba(34, 197, 94, 0.8); } }
         .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         .float { animation: float 3s ease-in-out infinite; }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-white to-green-50 min-h-screen">
     <div id="app"></div>
-
-    <script type="module">
-        import React, { useState, useEffect } from 'https://cdn.skypack.dev/react';
-        import ReactDOM from 'https://cdn.skypack.dev/react-dom';
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
         const VitalClock = () => {
-            const [currentPage, setCurrentPage] = useState('landing');
-            const [userData, setUserData] = useState({
-                name: '',
-                email: '',
-                age: '',
-                gender: '',
-                sleep: '7',
-                exercise: '3',
-                diet: 'balanced',
-                smoking: 'no',
-                alcohol: 'moderate',
-                stress: '5',
-                screenTime: '4'
-            });
-            const [lifeExpectancy, setLifeExpectancy] = useState(null);
-            const [achievements, setAchievements] = useState([]);
+            const [page, setPage] = useState('landing');
+            const [user, setUser] = useState({ name: '', email: '', age: '', gender: '', sleep: '7', exercise: '3', diet: 'balanced', smoking: 'no', alcohol: 'moderate', stress: '5', screenTime: '4' });
+            const [life, setLife] = useState(null);
+            const [showSim, setShowSim] = useState(false);
 
-            const calculateLifeExpectancy = (data) => {
-                let base = data.gender === 'male' ? 76 : 81;
-                
-                // Sleep impact
-                if (data.sleep < 6) base -= 5;
-                else if (data.sleep >= 7 && data.sleep <= 8) base += 3;
-                
-                // Exercise impact
-                if (data.exercise >= 4) base += 4;
-                else if (data.exercise <= 1) base -= 3;
-                
-                // Diet impact
-                if (data.diet === 'healthy') base += 3;
-                else if (data.diet === 'poor') base -= 4;
-                
-                // Smoking impact
-                if (data.smoking === 'yes') base -= 10;
-                
-                // Alcohol impact
-                if (data.alcohol === 'heavy') base -= 5;
-                else if (data.alcohol === 'none') base += 2;
-                
-                // Stress impact
-                if (data.stress >= 8) base -= 4;
-                else if (data.stress <= 3) base += 2;
-                
-                // Screen time impact
-                if (data.screenTime >= 8) base -= 2;
-                
-                return Math.max(50, Math.min(100, base));
+            const calcLife = (d) => {
+                let b = d.gender === 'male' ? 76 : 81;
+                if (d.sleep < 6) b -= 5; else if (d.sleep >= 7 && d.sleep <= 8) b += 3;
+                if (d.exercise >= 4) b += 4; else if (d.exercise <= 1) b -= 3;
+                if (d.diet === 'healthy') b += 3; else if (d.diet === 'poor') b -= 4;
+                if (d.smoking === 'yes') b -= 10;
+                if (d.alcohol === 'heavy') b -= 5; else if (d.alcohol === 'none') b += 2;
+                if (d.stress >= 8) b -= 4; else if (d.stress <= 3) b += 2;
+                if (d.screenTime >= 8) b -= 2;
+                return Math.max(50, Math.min(100, b));
             };
 
-            const LandingPage = () => (
+            if (page === 'landing') return (
                 <div className="min-h-screen">
                     <nav className="glass fixed w-full z-50 px-6 py-4">
                         <div className="max-w-7xl mx-auto flex justify-between items-center">
                             <h1 className="text-2xl font-bold text-purple-700">⏰ VitalClock</h1>
-                            <button 
-                                onClick={() => setCurrentPage('login')}
-                                className="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition"
-                            >
-                                Começar Agora
-                            </button>
+                            <button onClick={() => setPage('login')} className="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition">Começar Agora</button>
                         </div>
                     </nav>
-
                     <section className="pt-32 pb-20 px-6">
                         <div className="max-w-7xl mx-auto text-center">
-                            <div className="float mb-8">
-                                <div className="text-8xl mb-4">⏰</div>
-                            </div>
-                            <h2 className="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
-                                Quanto Tempo Você Tem?
-                            </h2>
-                            <p className="text-2xl text-gray-700 mb-12 max-w-3xl mx-auto">
-                                Descubra como seus hábitos impactam sua expectativa de vida e transforme cada dia em uma conquista
-                            </p>
-                            <button 
-                                onClick={() => setCurrentPage('login')}
-                                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-12 py-4 rounded-full text-xl font-semibold hover:scale-105 transition pulse-glow"
-                            >
-                                Descobrir Meu Tempo 🚀
-                            </button>
+                            <div className="float mb-8"><div className="text-8xl mb-4">⏰</div></div>
+                            <h2 className="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">Quanto Tempo Você Tem?</h2>
+                            <p className="text-2xl text-gray-700 mb-12 max-w-3xl mx-auto">Descubra como seus hábitos impactam sua expectativa de vida</p>
+                            <button onClick={() => setPage('login')} className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-12 py-4 rounded-full text-xl font-semibold hover:scale-105 transition pulse-glow">Descobrir Meu Tempo 🚀</button>
                         </div>
                     </section>
-
                     <section className="py-20 px-6 bg-white">
                         <div className="max-w-7xl mx-auto">
                             <h3 className="text-4xl font-bold text-center mb-16">✨ Como Funciona</h3>
                             <div className="grid md:grid-cols-3 gap-8">
-                                <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-blue-50 hover:scale-105 transition">
-                                    <div className="text-5xl mb-4">📊</div>
-                                    <h4 className="text-2xl font-bold mb-3 text-purple-700">Analise</h4>
-                                    <p className="text-gray-600">Responda um questionário sobre seus hábitos e receba uma análise completa</p>
-                                </div>
-                                <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-green-50 hover:scale-105 transition">
-                                    <div className="text-5xl mb-4">⏱️</div>
-                                    <h4 className="text-2xl font-bold mb-3 text-blue-700">Visualize</h4>
-                                    <p className="text-gray-600">Veja seu relógio de vida em tempo real e o impacto de cada hábito</p>
-                                </div>
-                                <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-green-50 to-purple-50 hover:scale-105 transition">
-                                    <div className="text-5xl mb-4">🎯</div>
-                                    <h4 className="text-2xl font-bold mb-3 text-green-700">Melhore</h4>
-                                    <p className="text-gray-600">Simule mudanças e ganhe anos de vida com escolhas mais saudáveis</p>
-                                </div>
+                                <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-blue-50 hover:scale-105 transition"><div className="text-5xl mb-4">📊</div><h4 className="text-2xl font-bold mb-3 text-purple-700">Analise</h4><p className="text-gray-600">Responda um questionário sobre seus hábitos</p></div>
+                                <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-green-50 hover:scale-105 transition"><div className="text-5xl mb-4">⏱️</div><h4 className="text-2xl font-bold mb-3 text-blue-700">Visualize</h4><p className="text-gray-600">Veja seu relógio de vida em tempo real</p></div>
+                                <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-green-50 to-purple-50 hover:scale-105 transition"><div className="text-5xl mb-4">🎯</div><h4 className="text-2xl font-bold mb-3 text-green-700">Melhore</h4><p className="text-gray-600">Simule mudanças e ganhe anos de vida</p></div>
                             </div>
-                        </div>
-                    </section>
-
-                    <section className="py-20 px-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-                        <div className="max-w-4xl mx-auto text-center">
-                            <h3 className="text-4xl font-bold mb-6">Pronto para Descobrir?</h3>
-                            <p className="text-xl mb-8 opacity-90">Junte-se a milhares de pessoas transformando seus hábitos</p>
-                            <button 
-                                onClick={() => setCurrentPage('login')}
-                                className="bg-white text-purple-600 px-12 py-4 rounded-full text-xl font-semibold hover:scale-105 transition"
-                            >
-                                Começar Gratuitamente
-                            </button>
                         </div>
                     </section>
                 </div>
             );
 
-            const LoginPage = () => {
-                const [isLogin, setIsLogin] = useState(true);
-                const [formData, setFormData] = useState({ name: '', email: '' });
-
-                const handleSubmit = (e) => {
-                    e.preventDefault();
-                    setUserData({ ...userData, ...formData });
-                    setCurrentPage('questionnaire');
-                };
-
-                return (
-                    <div className="min-h-screen flex items-center justify-center px-6">
-                        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8">
-                            <div className="text-center mb-8">
-                                <div className="text-6xl mb-4">⏰</div>
-                                <h2 className="text-3xl font-bold text-gray-800">VitalClock</h2>
-                                <p className="text-gray-600 mt-2">Seu tempo começa agora</p>
-                            </div>
-
-                            <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-full">
-                                <button 
-                                    onClick={() => setIsLogin(true)}
-                                    className={`flex-1 py-2 rounded-full transition ${isLogin ? 'bg-white shadow' : ''}`}
-                                >
-                                    Login
-                                </button>
-                                <button 
-                                    onClick={() => setIsLogin(false)}
-                                    className={`flex-1 py-2 rounded-full transition ${!isLogin ? 'bg-white shadow' : ''}`}
-                                >
-                                    Cadastro
-                                </button>
-                            </div>
-
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                {!isLogin && (
-                                    <input
-                                        type="text"
-                                        placeholder="Nome completo"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                        required
-                                    />
-                                )}
-                                <input
-                                    type="email"
-                                    placeholder="Seu melhor e-mail"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                    required
-                                />
-                                <input
-                                    type="password"
-                                    placeholder="Senha"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                    required
-                                />
-                                <button 
-                                    type="submit"
-                                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-semibold hover:scale-105 transition"
-                                >
-                                    {isLogin ? 'Entrar' : 'Criar Conta'}
-                                </button>
-                            </form>
-
-                            <div className="mt-6 text-center">
-                                <button 
-                                    onClick={() => setCurrentPage('landing')}
-                                    className="text-gray-600 hover:text-gray-800"
-                                >
-                                    ← Voltar
-                                </button>
-                            </div>
-                        </div>
+            if (page === 'login') return (
+                <div className="min-h-screen flex items-center justify-center px-6">
+                    <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8">
+                        <div className="text-center mb-8"><div className="text-6xl mb-4">⏰</div><h2 className="text-3xl font-bold text-gray-800">VitalClock</h2></div>
+                        <form onSubmit={(e) => { e.preventDefault(); setPage('quest'); }} className="space-y-4">
+                            <input type="text" placeholder="Nome" onChange={(e) => setUser({...user, name: e.target.value})} className="w-full px-4 py-3 border border-gray-300 rounded-xl" required />
+                            <input type="email" placeholder="E-mail" onChange={(e) => setUser({...user, email: e.target.value})} className="w-full px-4 py-3 border border-gray-300 rounded-xl" required />
+                            <input type="password" placeholder="Senha" className="w-full px-4 py-3 border border-gray-300 rounded-xl" required />
+                            <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-semibold">Criar Conta</button>
+                        </form>
+                        <button onClick={() => setPage('landing')} className="mt-4 text-gray-600">← Voltar</button>
                     </div>
-                );
-            };
+                </div>
+            );
 
-            const QuestionnairePage = () => {
+            if (page === 'quest') {
                 const [step, setStep] = useState(1);
-                const totalSteps = 4;
-
-                const handleSubmit = () => {
-                    const life = calculateLifeExpectancy(userData);
-                    setLifeExpectancy(life);
-                    setCurrentPage('dashboard');
-                };
-
                 return (
                     <div className="min-h-screen py-12 px-6">
-                        <div className="max-w-3xl mx-auto">
-                            <div className="bg-white rounded-3xl shadow-2xl p-8">
-                                <div className="mb-8">
-                                    <div className="flex justify-between items-center mb-4">
-                                        <h2 className="text-3xl font-bold text-gray-800">Conte-nos sobre você</h2>
-                                        <span className="text-purple-600 font-semibold">Passo {step}/{totalSteps}</span>
-                                    </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-3">
-                                        <div 
-                                            className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full transition-all duration-300"
-                                            style={{ width: `${(step / totalSteps) * 100}%` }}
-                                        />
-                                    </div>
-                                </div>
-
-                                {step === 1 && (
-                                    <div className="space-y-6">
-                                        <h3 className="text-2xl font-semibold text-gray-700 mb-4">📋 Informações Básicas</h3>
-                                        <div>
-                                            <label className="block text-gray-700 mb-2 font-medium">Idade</label>
-                                            <input
-                                                type="number"
-                                                value={userData.age}
-                                                onChange={(e) => setUserData({...userData, age: e.target.value})}
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500"
-                                                placeholder="Ex: 30"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-gray-700 mb-2 font-medium">Sexo Biológico</label>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUserData({...userData, gender: 'male'})}
-                                                    className={`py-3 rounded-xl border-2 transition ${userData.gender === 'male' ? 'border-purple-600 bg-purple-50' : 'border-gray-300'}`}
-                                                >
-                                                    Masculino
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUserData({...userData, gender: 'female'})}
-                                                    className={`py-3 rounded-xl border-2 transition ${userData.gender === 'female' ? 'border-purple-600 bg-purple-50' : 'border-gray-300'}`}
-                                                >
-                                                    Feminino
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {step === 2 && (
-                                    <div className="space-y-6">
-                                        <h3 className="text-2xl font-semibold text-gray-700 mb-4">😴 Sono e Descanso</h3>
-                                        <div>
-                                            <label className="block text-gray-700 mb-2 font-medium">Horas de sono por noite</label>
-                                            <input
-                                                type="range"
-                                                min="4"
-                                                max="12"
-                                                value={userData.sleep}
-                                                onChange={(e) => setUserData({...userData, sleep: e.target.value})}
-                                                className="w-full"
-                                            />
-                                            <div className="text-center text-2xl font-bold text-purple-600 mt-2">{userData.sleep}h</div>
-                                        </div>
-                                        <div>
-                                            <label className="block text-gray-700 mb-2 font-medium">Nível de estresse (1-10)</label>
-                                            <input
-                                                type="range"
-                                                min="1"
-                                                max="10"
-                                                value={userData.stress}
-                                                onChange={(e) => setUserData({...userData, stress: e.target.value})}
-                                                className="w-full"
-                                            />
-                                            <div className="text-center text-2xl font-bold text-purple-600 mt-2">{userData.stress}/10</div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {step === 3 && (
-                                    <div className="space-y-6">
-                                        <h3 className="text-2xl font-semibold text-gray-700 mb-4">🏃 Atividade Física e Alimentação</h3>
-                                        <div>
-                                            <label className="block text-gray-700 mb-2 font-medium">Dias de exercício por semana</label>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="7"
-                                                value={userData.exercise}
-                                                onChange={(e) => setUserData({...userData, exercise: e.target.value})}
-                                                className="w-full"
-                                            />
-                                            <div className="text-center text-2xl font-bold text-purple-600 mt-2">{userData.exercise} dias</div>
-                                        </div>
-                                        <div>
-                                            <label className="block text-gray-700 mb-2 font-medium">Qualidade da alimentação</label>
-                                            <select
-                                                value={userData.diet}
-                                                onChange={(e) => setUserData({...userData, diet: e.target.value})}
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500"
-                                            >
-                                                <option value="healthy">Saudável (frutas, vegetais, proteínas)</option>
-                                                <option value="balanced">Equilibrada (misto)</option>
-                                                <option value="poor">Precisa melhorar (fast food, processados)</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {step === 4 && (
-                                    <div className="space-y-6">
-                                        <h3 className="text-2xl font-semibold text-gray-700 mb-4">🚭 Hábitos e Vícios</h3>
-                                        <div>
-                                            <label className="block text-gray-700 mb-2 font-medium">Você fuma?</label>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUserData({...userData, smoking: 'no'})}
-                                                    className={`py-3 rounded-xl border-2 transition ${userData.smoking === 'no' ? 'border-green-600 bg-green-50' : 'border-gray-300'}`}
-                                                >
-                                                    Não
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUserData({...userData, smoking: 'yes'})}
-                                                    className={`py-3 rounded-xl border-2 transition ${userData.smoking === 'yes' ? 'border-red-600 bg-red-50' : 'border-gray-300'}`}
-                                                >
-                                                    Sim
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label className="block text-gray-700 mb-2 font-medium">Consumo de álcool</label>
-                                            <select
-                                                value={userData.alcohol}
-                                                onChange={(e) => setUserData({...userData, alcohol: e.target.value})}
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500"
-                                            >
-                                                <option value="none">Não bebo</option>
-                                                <option value="moderate">Socialmente (1-2x semana)</option>
-                                                <option value="heavy">Frequentemente (3+ vezes/semana)</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-gray-700 mb-2 font-medium">Horas de tela por dia</label>
-                                            <input
-                                                type="range"
-                                                min="1"
-                                                max="16"
-                                                value={userData.screenTime}
-                                                onChange={(e) => setUserData({...userData, screenTime: e.target.value})}
-                                                className="w-full"
-                                            />
-                                            <div className="text-center text-2xl font-bold text-purple-600 mt-2">{userData.screenTime}h</div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className="flex justify-between mt-8">
-                                    <button
-                                        onClick={() => step > 1 ? setStep(step - 1) : setCurrentPage('login')}
-                                        className="px-6 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-50 transition"
-                                    >
-                                        ← Voltar
-                                    </button>
-                                    {step < totalSteps ? (
-                                        <button
-                                            onClick={() => setStep(step + 1)}
-                                            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:scale-105 transition"
-                                        >
-                                            Próximo →
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={handleSubmit}
-                                            className="px-8 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-xl hover:scale-105 transition font-semibold"
-                                        >
-                                            Ver Resultados 🎯
-                                        </button>
-                                    )}
-                                </div>
+                        <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl p-8">
+                            <div className="mb-8">
+                                <div className="flex justify-between mb-4"><h2 className="text-3xl font-bold">Conte sobre você</h2><span className="text-purple-600">Passo {step}/4</span></div>
+                                <div className="w-full bg-gray-200 rounded-full h-3"><div className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full" style={{width: `${(step/4)*100}%`}}></div></div>
+                            </div>
+                            {step === 1 && <div className="space-y-6"><h3 className="text-2xl font-semibold mb-4">📋 Básico</h3><input type="number" placeholder="Idade" value={user.age} onChange={(e) => setUser({...user, age: e.target.value})} className="w-full px-4 py-3 border rounded-xl" /><div className="grid grid-cols-2 gap-4"><button onClick={() => setUser({...user, gender: 'male'})} className={`py-3 rounded-xl border-2 ${user.gender === 'male' ? 'border-purple-600 bg-purple-50' : 'border-gray-300'}`}>Masculino</button><button onClick={() => setUser({...user, gender: 'female'})} className={`py-3 rounded-xl border-2 ${user.gender === 'female' ? 'border-purple-600 bg-purple-50' : 'border-gray-300'}`}>Feminino</button></div></div>}
+                            {step === 2 && <div className="space-y-6"><h3 className="text-2xl font-semibold mb-4">😴 Sono</h3><label className="block">Horas de sono: {user.sleep}h</label><input type="range" min="4" max="12" value={user.sleep} onChange={(e) => setUser({...user, sleep: e.target.value})} className="w-full" /><label className="block mt-4">Estresse: {user.stress}/10</label><input type="range" min="1" max="10" value={user.stress} onChange={(e) => setUser({...user, stress: e.target.value})} className="w-full" /></div>}
+                            {step === 3 && <div className="space-y-6"><h3 className="text-2xl font-semibold mb-4">🏃 Exercício</h3><label className="block">Dias/semana: {user.exercise}</label><input type="range" min="0" max="7" value={user.exercise} onChange={(e) => setUser({...user, exercise: e.target.value})} className="w-full" /><select value={user.diet} onChange={(e) => setUser({...user, diet: e.target.value})} className="w-full px-4 py-3 border rounded-xl mt-4"><option value="healthy">Saudável</option><option value="balanced">Equilibrada</option><option value="poor">Precisa melhorar</option></select></div>}
+                            {step === 4 && <div className="space-y-6"><h3 className="text-2xl font-semibold mb-4">🚭 Hábitos</h3><div className="grid grid-cols-2 gap-4"><button onClick={() => setUser({...user, smoking: 'no'})} className={`py-3 rounded-xl border-2 ${user.smoking === 'no' ? 'border-green-600 bg-green-50' : 'border-gray-300'}`}>Não fumo</button><button onClick={() => setUser({...user, smoking: 'yes'})} className={`py-3 rounded-xl border-2 ${user.smoking === 'yes' ? 'border-red-600 bg-red-50' : 'border-gray-300'}`}>Fumo</button></div></div>}
+                            <div className="flex justify-between mt-8">
+                                <button onClick={() => step > 1 ? setStep(step-1) : setPage('login')} className="px-6 py-3 border-2 rounded-xl">← Voltar</button>
+                                {step < 4 ? <button onClick={() => setStep(step+1)} className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl">Próximo →</button> : <button onClick={() => { setLife(calcLife(user)); setPage('dash'); }} className="px-8 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-xl font-semibold">Ver Resultados 🎯</button>}
                             </div>
                         </div>
                     </div>
                 );
-            };
+            }
 
-            const DashboardPage = () => {
-                const [timeLeft, setTimeLeft] = useState({});
-                const [showSimulator, setShowSimulator] = useState(false);
-
+            if (page === 'dash') {
+                const [time, setTime] = useState({});
                 useEffect(() => {
-                    if (lifeExpectancy) {
-                        const yearsLeft = lifeExpectancy - parseInt(userData.age);
+                    const interval = setInterval(() => {
                         const now = new Date();
-                        const endDate = new Date(now.getFullYear() + yearsLeft, now.getMonth(), now.getDate());
-                        
-                        const interval = setInterval(() => {
-                            const diff = endDate - new Date();
-                            setTimeLeft({
-                                years: Math.floor(diff / (1000 * 60 * 60 * 24 * 365)),
-                                days: Math.floor((diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24)),
-                                hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                                minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-                                seconds: Math.floor((diff % (1000 * 60)) / 1000)
-                            });
-                        }, 1000);
+                        const end = new Date(now.getFullYear() + (life - user.age), now.getMonth(), now.getDate());
+                        const diff = end - now;
+                        setTime({
+                            years: Math.floor(diff / (1000*60*60*24*365)),
+                            days: Math.floor((diff % (1000*60*60*24*365)) / (1000*60*60*24)),
+                            hours: Math.floor((diff % (1000*60*60*24)) / (1000*60*60)),
+                            minutes: Math.floor((diff % (1000*60*60)) / (1000*60)),
+                            seconds: Math.floor((diff % (1000*60)) / 1000)
+                        });
+                    }, 1000);
+                    return () => clearInterval(interval);
+                }, []);
 
-                        return () => clearInterval(interval);
-                    }
-                }, [lifeExpectancy]);
-
-                const getHabitImpact = () => {
-                    const impacts = [];
-                    if (userData.sleep < 6) impacts.push({ habit: 'Sono insuficiente', impact: -5, icon: '😴' });
-                    if (userData.sleep >= 7 && userData.sleep <= 8) impacts.push({ habit: 'Sono adequado', impact: +3, icon: '✅' });
-                    if (userData.exercise >= 4) impacts.push({ habit: 'Exercício regular', impact: +4, icon: '🏃' });
-                    if (userData.smoking === 'yes') impacts.push({ habit: 'Tabagismo', impact: -10, icon: '🚭' });
-                    if (userData.stress >= 8) impacts.push({ habit: 'Estresse alto', impact: -4, icon: '😰' });
-                    if (userData.diet === 'healthy') impacts.push({ habit: 'Alimentação saudável', impact: +3, icon: '🥗' });
-                    return impacts;
-                };
+                const impacts = [];
+                if (user.sleep < 6) impacts.push({ h: 'Sono insuficiente', i: -5, ic: '😴' });
+                if (user.exercise >= 4) impacts.push({ h: 'Exercício regular', i: 4, ic: '🏃' });
+                if (user.smoking === 'yes') impacts.push({ h: 'Tabagismo', i: -10, ic: '🚭' });
 
                 return (
                     <div className="min-h-screen py-12 px-6">
                         <div className="max-w-7xl mx-auto">
-                            <div className="flex justify-between items-center mb-8">
-                                <h1 className="text-4xl font-bold text-gray-800">Olá, {userData.name || 'Usuário'}! 👋</h1>
-                                <button 
-                                    onClick={() => setCurrentPage('premium')}
-                                    className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-full font-semibold hover:scale-105 transition"
-                                >
-                                    ⭐ Upgrade Premium
-                                </button>
-                            </div>
-
+                            <div className="flex justify-between mb-8"><h1 className="text-4xl font-bold">Olá, {user.name}! 👋</h1><button onClick={() => setPage('premium')} className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-full font-semibold">⭐ Premium</button></div>
                             <div className="grid lg:grid-cols-2 gap-8 mb-8">
                                 <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-3xl p-8 text-white shadow-2xl">
-                                    <h2 className="text-3xl font-bold mb-4">⏰ Seu Relógio de Vida</h2>
-                                    <div className="text-center py-8">
-                                        <div className="text-6xl font-bold mb-4">{lifeExpectancy} anos</div>
-                                        <div className="text-xl opacity-90 mb-8">Expectativa de vida estimada</div>
-                                        
-                                        {timeLeft.years !== undefined && (
-                                            <div className="grid grid-cols-5 gap-4 text-center">
-                                                <div>
-                                                    <div className="text-3xl font-bold">{timeLeft.years}</div>
-                                                    <div className="text-sm opacity-75">Anos</div>
-                                                </div>
-                                                <div>
-                                                    <div className="text-3xl font-bold">{timeLeft.days}</div>
-                                                    <div className="text-sm opacity-75">Dias</div>
-                                                </div>
-                                                <div>
-                                                    <div className="text-3xl font-bold">{timeLeft.hours}</div>
-                                                    <div className="text-sm opacity-75">Horas</div>
-                                                </div>
-                                                <div>
-                                                    <div className="text-3xl font-bold">{timeLeft.minutes}</div>
-                                                    <div className="text-sm opacity-75">Min</div>
-                                                </div>
-                                                <div>
-                                                    <div className="text-3xl font-bold">{timeLeft.seconds}</div>
-                                                    <div className="text-sm opacity-75">Seg</div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
+                                    <h2 className="text-3xl font-bold mb-4">⏰ Seu Relógio</h2>
+                                    <div className="text-center py-8"><div className="text-6xl font-bold mb-4">{life} anos</div><div className="text-xl mb-8">Expectativa de vida</div>
+                                    {time.years >= 0 && <div className="grid grid-cols-5 gap-4"><div><div className="text-3xl font-bold">{time.years}</div><div className="text-sm">Anos</div></div><div><div className="text-3xl font-bold">{time.days}</div><div className="text-sm">Dias</div></div><div><div className="text-3xl font-bold">{time.hours}</div><div className="text-sm">Horas</div></div><div><div className="text-3xl font-bold">{time.minutes}</div><div className="text-sm">Min</div></div><div><div className="text-3xl font-bold">{time.seconds}</div><div className="text-sm">Seg</div></div></div>}</div>
                                 </div>
-
                                 <div className="bg-white rounded-3xl p-8 shadow-xl">
-                                    <h2 className="text-2xl font-bold text-gray-800 mb-6">📊 Impacto dos Seus Hábitos</h2>
-                                    <div className="space-y-4">
-                                        {getHabitImpact().map((item, idx) => (
-                                            <div key={idx} className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
-                                                <div className="flex items-center gap-3">
-<<<<<<< HEAD
-                                                    <span className="text-3xl
-=======
-                                                    <span className="text-3xl">{item.icon}</span>
-                                                    <span className="font-medium text-gray-700">{item.habit}</span>
-                                                </div>
-                                                <span className={`font-bold text-xl ${item.impact > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                                    {item.impact > 0 ? '+' : ''}{item.impact} anos
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <button 
-                                        onClick={() => setShowSimulator(true)}
-                                        className="w-full mt-6 bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 rounded-xl font-semibold hover:scale-105 transition"
-                                    >
-                                        🔄 Simular Mudanças
-                                    </button>
+                                    <h2 className="text-2xl font-bold mb-6">📊 Impacto</h2>
+                                    <div className="space-y-4">{impacts.map((item, i) => <div key={i} className="flex justify-between p-4 bg-gray-50 rounded-xl"><div className="flex gap-3"><span className="text-3xl">{item.ic}</span><span className="font-medium">{item.h}</span></div><span className={`font-bold text-xl ${item.i > 0 ? 'text-green-600' : 'text-red-600'}`}>{item.i > 0 ? '+' : ''}{item.i} anos</span></div>)}</div>
+                                    <button onClick={() => setShowSim(true)} className="w-full mt-6 bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 rounded-xl font-semibold">🔄 Simular Mudanças</button>
                                 </div>
                             </div>
-
-                            <div className="grid md:grid-cols-3 gap-6 mb-8">
-                                <div className="bg-white rounded-2xl p-6 shadow-lg hover:scale-105 transition">
-                                    <div className="text-4xl mb-3">🎯</div>
-                                    <h3 className="text-xl font-bold text-gray-800 mb-2">Metas de Vida</h3>
-                                    <p className="text-gray-600 mb-4">Planeje seus sonhos e veja quanto tempo precisa</p>
-                                    <button className="text-purple-600 font-semibold hover:underline">Ver Planejador →</button>
-                                </div>
-
-                                <div className="bg-white rounded-2xl p-6 shadow-lg hover:scale-105 transition">
-                                    <div className="text-4xl mb-3">🏆</div>
-                                    <h3 className="text-xl font-bold text-gray-800 mb-2">Suas Conquistas</h3>
-                                    <p className="text-gray-600 mb-4">Complete desafios e ganhe recompensas</p>
-                                    <button className="text-purple-600 font-semibold hover:underline">Ver Conquistas →</button>
-                                </div>
-
-                                <div className="bg-white rounded-2xl p-6 shadow-lg hover:scale-105 transition">
-                                    <div className="text-4xl mb-3">📈</div>
-                                    <h3 className="text-xl font-bold text-gray-800 mb-2">Progresso</h3>
-                                    <p className="text-gray-600 mb-4">Acompanhe sua evolução ao longo do tempo</p>
-                                    <button className="text-purple-600 font-semibold hover:underline">Ver Relatórios →</button>
-                                </div>
-                            </div>
-
-                            <div className="bg-gradient-to-r from-orange-100 to-red-100 rounded-2xl p-6 border-2 border-orange-300">
-                                <div className="flex items-start gap-4">
-                                    <div className="text-4xl">⚠️</div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-800 mb-2">Alerta Importante!</h3>
-                                        <p className="text-gray-700">
-                                            {userData.sleep < 6 && "Dormir menos de 6 horas por noite pode reduzir até 5 anos da sua vida saudável. "}
-                                            {userData.smoking === 'yes' && "O tabagismo pode reduzir até 10 anos da sua expectativa de vida. "}
-                                            {userData.exercise <= 1 && "A falta de exercício físico pode impactar negativamente sua longevidade. "}
-                                            Considere fazer pequenas mudanças hoje!
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {showSimulator && (
-                                <SimulatorModal onClose={() => setShowSimulator(false)} userData={userData} />
-                            )}
+                            {showSim && <Simulator onClose={() => setShowSim(false)} user={user} calc={calcLife} />}
                         </div>
                     </div>
                 );
-            };
+            }
 
-            const SimulatorModal = ({ onClose, userData }) => {
-                const [simData, setSimData] = useState({ ...userData });
-                const currentLife = calculateLifeExpectancy(userData);
-                const simulatedLife = calculateLifeExpectancy(simData);
-                const difference = simulatedLife - currentLife;
-
-                return (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-6">
-                        <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-8">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-3xl font-bold text-gray-800">🔄 Simulador de Mudanças</h2>
-                                <button onClick={onClose} className="text-4xl text-gray-500 hover:text-gray-700">×</button>
-                            </div>
-
-                            <div className="grid md:grid-cols-2 gap-6 mb-6">
-                                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6">
-                                    <h3 className="text-xl font-bold text-gray-800 mb-2">Expectativa Atual</h3>
-                                    <div className="text-5xl font-bold text-blue-600">{currentLife} anos</div>
-                                </div>
-
-                                <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-6">
-                                    <h3 className="text-xl font-bold text-gray-800 mb-2">Expectativa Simulada</h3>
-                                    <div className="text-5xl font-bold text-green-600">{simulatedLife} anos</div>
-                                    {difference !== 0 && (
-                                        <div className={`text-2xl font-semibold mt-2 ${difference > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                            {difference > 0 ? '+' : ''}{difference} anos
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="space-y-6">
-                                <div>
-                                    <label className="block text-gray-700 mb-2 font-medium">😴 Horas de sono: {simData.sleep}h</label>
-                                    <input
-                                        type="range"
-                                        min="4"
-                                        max="12"
-                                        value={simData.sleep}
-                                        onChange={(e) => setSimData({...simData, sleep: e.target.value})}
-                                        className="w-full"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 mb-2 font-medium">🏃 Exercício: {simData.exercise} dias/semana</label>
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="7"
-                                        value={simData.exercise}
-                                        onChange={(e) => setSimData({...simData, exercise: e.target.value})}
-                                        className="w-full"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 mb-2 font-medium">🥗 Alimentação</label>
-                                    <select
-                                        value={simData.diet}
-                                        onChange={(e) => setSimData({...simData, diet: e.target.value})}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl"
-                                    >
-                                        <option value="healthy">Saudável</option>
-                                        <option value="balanced">Equilibrada</option>
-                                        <option value="poor">Precisa melhorar</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 mb-2 font-medium">🚭 Fumar</label>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <button
-                                            onClick={() => setSimData({...simData, smoking: 'no'})}
-                                            className={`py-3 rounded-xl border-2 ${simData.smoking === 'no' ? 'border-green-600 bg-green-50' : 'border-gray-300'}`}
-                                        >
-                                            Não
-                                        </button>
-                                        <button
-                                            onClick={() => setSimData({...simData, smoking: 'yes'})}
-                                            className={`py-3 rounded-xl border-2 ${simData.smoking === 'yes' ? 'border-red-600 bg-red-50' : 'border-gray-300'}`}
-                                        >
-                                            Sim
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 mb-2 font-medium">😰 Nível de estresse: {simData.stress}/10</label>
-                                    <input
-                                        type="range"
-                                        min="1"
-                                        max="10"
-                                        value={simData.stress}
-                                        onChange={(e) => setSimData({...simData, stress: e.target.value})}
-                                        className="w-full"
-                                    />
-                                </div>
-                            </div>
-
-                            {difference > 0 && (
-                                <div className="mt-6 bg-green-100 border-2 border-green-500 rounded-2xl p-6">
-                                    <h3 className="text-xl font-bold text-green-800 mb-2">🎉 Ótima notícia!</h3>
-                                    <p className="text-green-700">
-                                        Com essas mudanças, você pode ganhar <strong>{difference} anos</strong> de vida saudável!
-                                        Isso são aproximadamente <strong>{difference * 365} dias</strong> extras para realizar seus sonhos!
-                                    </p>
-                                </div>
-                            )}
-
-                            <button 
-                                onClick={onClose}
-                                className="w-full mt-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 rounded-xl font-semibold hover:scale-105 transition"
-                            >
-                                Fechar Simulador
-                            </button>
-                        </div>
-                    </div>
-                );
-            };
-
-            const PremiumPage = () => (
+            if (page === 'premium') return (
                 <div className="min-h-screen py-12 px-6">
                     <div className="max-w-6xl mx-auto">
-                        <div className="text-center mb-12">
-                            <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 to-orange-500">
-                                ⭐ VitalClock Premium
-                            </h1>
-                            <p className="text-xl text-gray-600">Desbloqueie todo o potencial do seu tempo de vida</p>
+                        <h1 className="text-5xl font-bold text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 to-orange-500">⭐ Premium</h1>
+                        <div className="grid md:grid-cols-2 gap-8 mt-12">
+                            <div className="bg-white rounded-3xl p-8 shadow-xl"><h3 className="text-2xl font-bold text-center mb-4">Gratuito</h3><div className="text-4xl font-bold text-center mb-6">R$ 0</div></div>
+                            <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-3xl p-8 shadow-2xl text-white"><h3 className="text-2xl font-bold text-center mb-4">Premium</h3><div className="text-5xl font-bold text-center mb-6">R$ 29,90</div><button className="w-full bg-white text-orange-600 py-4 rounded-xl font-bold mt-6">Assinar 🚀</button></div>
                         </div>
-
-                        <div className="grid md:grid-cols-2 gap-8 mb-12">
-                            <div className="bg-white rounded-3xl p-8 shadow-xl border-2 border-gray-200">
-                                <div className="text-center mb-6">
-                                    <h3 className="text-2xl font-bold text-gray-800 mb-2">Plano Gratuito</h3>
-                                    <div className="text-4xl font-bold text-gray-600">R$ 0</div>
-                                    <div className="text-gray-500">para sempre</div>
-                                </div>
-                                <ul className="space-y-4">
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-green-600 text-2xl">✓</span>
-                                        <span>Relógio de vida básico</span>
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-green-600 text-2xl">✓</span>
-                                        <span>Análise de hábitos</span>
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-green-600 text-2xl">✓</span>
-                                        <span>Simulador simples</span>
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-gray-400 text-2xl">×</span>
-                                        <span className="text-gray-400">Relatórios avançados</span>
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-gray-400 text-2xl">×</span>
-                                        <span className="text-gray-400">Integração com wearables</span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-3xl p-8 shadow-2xl transform scale-105 border-4 border-yellow-300">
-                                <div className="absolute top-0 right-8 bg-red-500 text-white px-4 py-1 rounded-b-lg font-bold">
-                                    POPULAR
-                                </div>
-                                <div className="text-center mb-6 text-white">
-                                    <h3 className="text-2xl font-bold mb-2">Plano Premium</h3>
-                                    <div className="text-5xl font-bold">R$ 29,90</div>
-                                    <div className="text-lg opacity-90">por mês</div>
-                                </div>
-                                <ul className="space-y-4 text-white">
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-2xl">✓</span>
-                                        <span className="font-semibold">Tudo do plano gratuito</span>
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-2xl">✓</span>
-                                        <span className="font-semibold">Relatórios detalhados em PDF</span>
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-2xl">✓</span>
-                                        <span className="font-semibold">Integração Google Fit / Apple Health</span>
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-2xl">✓</span>
-                                        <span className="font-semibold">Planejador de metas avançado</span>
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-2xl">✓</span>
-                                        <span className="font-semibold">Alertas inteligentes personalizados</span>
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <span className="text-2xl">✓</span>
-                                        <span className="font-semibold">Suporte prioritário</span>
-                                    </li>
-                                </ul>
-                                <button className="w-full mt-6 bg-white text-orange-600 py-4 rounded-xl font-bold text-lg hover:scale-105 transition shadow-lg">
-                                    Assinar Premium Agora 🚀
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="text-center">
-                            <button 
-                                onClick={() => setCurrentPage('dashboard')}
-                                className="text-gray-600 hover:text-gray-800 font-semibold"
-                            >
-                                ← Voltar ao Dashboard
-                            </button>
-                        </div>
-
-                        <div className="mt-16 grid md:grid-cols-3 gap-6">
-                            <div className="text-center p-6">
-                                <div className="text-5xl mb-4">🔒</div>
-                                <h4 className="font-bold text-gray-800 mb-2">100% Seguro</h4>
-                                <p className="text-gray-600">Seus dados são criptografados e protegidos</p>
-                            </div>
-                            <div className="text-center p-6">
-                                <div className="text-5xl mb-4">↩️</div>
-                                <h4 className="font-bold text-gray-800 mb-2">Garantia de 30 dias</h4>
-                                <p className="text-gray-600">Cancele quando quiser, sem multas</p>
-                            </div>
-                            <div className="text-center p-6">
-                                <div className="text-5xl mb-4">💳</div>
-                                <h4 className="font-bold text-gray-800 mb-2">Pagamento Seguro</h4>
-                                <p className="text-gray-600">Aceitamos cartões e PIX</p>
-                            </div>
-                        </div>
+                        <button onClick={() => setPage('dash')} className="block mx-auto mt-8 text-gray-600">← Voltar</button>
                     </div>
                 </div>
             );
+        };
 
+        const Simulator = ({ onClose, user, calc }) => {
+            const [sim, setSim] = useState({...user});
+            const curr = calc(user);
+            const simLife = calc(sim);
+            const diff = simLife - curr;
             return (
-                <div>
-                    {currentPage === 'landing' && <LandingPage />}
-                    {currentPage === 'login' && <LoginPage />}
-                    {currentPage === 'questionnaire' && <QuestionnairePage />}
-                    {currentPage === 'dashboard' && <DashboardPage />}
-                    {currentPage === 'premium' && <PremiumPage />}
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-6">
+                    <div className="bg-white rounded-3xl max-w-4xl w-full p-8 max-h-[90vh] overflow-y-auto">
+                        <div className="flex justify-between mb-6"><h2 className="text-3xl font-bold">🔄 Simulador</h2><button onClick={onClose} className="text-4xl">×</button></div>
+                        <div className="grid md:grid-cols-2 gap-6 mb-6">
+                            <div className="bg-blue-50 rounded-2xl p-6"><h3 className="text-xl font-bold mb-2">Atual</h3><div className="text-5xl font-bold text-blue-600">{curr} anos</div></div>
+                            <div className="bg-green-50 rounded-2xl p-6"><h3 className="text-xl font-bold mb-2">Simulado</h3><div className="text-5xl font-bold text-green-600">{simLife} anos</div>{diff !== 0 && <div className={`text-2xl font-semibold mt-2 ${diff > 0 ? 'text-green-600' : 'text-red-600'}`}>{diff > 0 ? '+' : ''}{diff} anos</div>}</div>
+                        </div>
+                        <div className="space-y-4">
+                            <div><label className="block mb-2">😴 Sono: {sim.sleep}h</label><input type="range" min="4" max="12" value={sim.sleep} onChange={(e) => setSim({...sim, sleep: e.target.value})} className="w-full" /></div>
+                            <div><label className="block mb-2">🏃 Exercício: {sim.exercise} dias</label><input type="range" min="0" max="7" value={sim.exercise} onChange={(e) => setSim({...sim, exercise: e.target.value})} className="w-full" /></div>
+                            <div className="grid grid-cols-2 gap-4"><button onClick={() => setSim({...sim, smoking: 'no'})} className={`py-3 rounded-xl border-2 ${sim.smoking === 'no' ? 'border-green-600 bg-green-50' : 'border-gray-300'}`}>Não fumo</button><button onClick={() => setSim({...sim, smoking: 'yes'})} className={`py-3 rounded-xl border-2 ${sim.smoking === 'yes' ? 'border-red-600 bg-red-50' : 'border-gray-300'}`}>Fumo</button></div>
+                        </div>
+                        {diff > 0 && <div className="mt-6 bg-green-100 border-2 border-green-500 rounded-2xl p-6"><h3 className="text-xl font-bold text-green-800 mb-2">🎉 Ótima notícia!</h3><p className="text-green-700">Você pode ganhar <strong>{diff} anos</strong> de vida!</p></div>}
+                        <button onClick={onClose} className="w-full mt-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 rounded-xl font-semibold">Fechar</button>
+                    </div>
                 </div>
             );
         };
@@ -842,4 +194,3 @@
     </script>
 </body>
 </html>
->>>>>>> b94ba204bd3ab5a344fba9bc353d80a86a4da1d5
