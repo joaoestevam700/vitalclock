@@ -31,7 +31,7 @@ O VitalClock conecta-se ao tema "Inovações Paulistas" ao:
 
 ## 🚀 Acesse o Projeto
 
-**🌐 Site ao vivo:** [https://SEU_USUARIO.github.io/vitalclock/](https://joaoestevam700.github.io/vitalclock/)
+**🌐 Site ao vivo:** [https://joaoestevam700.github.io/vitalclock/](https://joaoestevam700.github.io/vitalclock/)
 
 ---
 
