@@ -2,7 +2,7 @@
 
 
 
-(https://img.shields.io/badge/VitalClock-Inova%C3%A7%C3%A3o%20Paulista-7c3aed?style=for-the-badge)
+https://img.shields.io/badge/VitalClock-Inova%C3%A7%C3%A3o%20Paulista-7c3aed?style=for-the-badge
 
 !\[HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge\&logo=html5\&logoColor=white)
 
