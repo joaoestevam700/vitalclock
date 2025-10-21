@@ -289,7 +289,7 @@ O algoritmo é baseado em estudos científicos sobre:
 ### Autor
 **Equipe Vital (João Estevam Fernandes Barbosa & Kauã Henrique Lima da Cruz**
 - GitHub: [joaoestevam700](https://github.com/joaoestevam700)
-- LinkedIn: [João Estevam](www.linkedin.com/in/joao-estevam-b05b2b309)
+- LinkedIn: [João Estevam](https://www.linkedin.com/in/joao-estevam-b05b2b309/)
 - Email: joaoestevan8@email.com
 
 ### Licença
