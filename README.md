@@ -293,7 +293,7 @@ O algoritmo é baseado em estudos científicos sobre:
 - Email: joaoestevan8@email.com
 
 ### Licença
-Este projeto está sob a licença **MIT**. Veja o arquivo `LICENSE` para mais detalhes.
+Este projeto está sob a licença **MIT**.
 ```
 MIT License
 
