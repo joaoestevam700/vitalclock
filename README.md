@@ -85,6 +85,8 @@ O VitalClock conecta-se ao tema "Inovações Paulistas" ao:
 - ✅ Alto contraste
 - ✅ Skip links
 
+Mais em breve, verificar nosso Roadmap...
+
 ---
 
 ## 🛠️ Tecnologias Utilizadas
@@ -121,11 +123,6 @@ vitalclock/
 │
 ├── index.html          # Arquivo único com toda a aplicação
 ├── README.md          # Este arquivo
-└── (opcional)
-    ├── assets/
-    │   ├── images/    # Imagens e ícones
-    │   └── fonts/     # Fontes customizadas
-    └── docs/          # Documentação adicional
 ```
 
 ### 🏗️ Arquitetura do Código
@@ -142,9 +139,9 @@ vitalclock/
 - VitalClock (Container Principal)
   ├── LandingPage (Página inicial)
   ├── LoginPage (Autenticação)
-  ├── QuestionnairePage (Questionário)
+  ├── QuestionarioPage (Questionário)
   ├── DashboardPage (Painel principal)
-  └── SimulatorModal (Modal de simulação)
+  └── SimuladorModal (Modal de simulação)
 
 // Utilitários
 - DB: Gerenciamento de dados locais
@@ -174,43 +171,6 @@ vitalclock/
 
 ---
 
-## 🚦 Como Visualizar o Projeto
-
-### Opção 1: GitHub Pages (Online)
-Acesse diretamente: [https://SEU_USUARIO.github.io/vitalclock/](https://SEU_USUARIO.github.io/vitalclock/)
-
-### Opção 2: Localmente
-
-1. **Clone o repositório**
-```bash
-git clone https://github.com/SEU_USUARIO/vitalclock.git
-cd vitalclock
-```
-
-2. **Abra o arquivo**
-- Simplesmente abra `index.html` em qualquer navegador moderno
-- Ou use um servidor local:
-```bash
-# Python 3
-python -m http.server 8000
-
-# Node.js (http-server)
-npx http-server
-
-# VS Code
-# Use a extensão "Live Server"
-```
-
-3. **Acesse**
-```
-http://localhost:8000
-```
-
-### Opção 3: CodePen/JSFiddle
-Copie o código completo do `index.html` para essas plataformas online.
-
----
-
 ## 🎮 Como Usar o VitalClock
 
 1. **Acesse a página inicial** e clique em "Começar Análise Gratuita"
@@ -231,7 +191,7 @@ Copie o código completo do `index.html` para essas plataformas online.
 
 ---
 
-## 🤖 Como Funciona a IA
+## 🤖 Como Funciona o Cálculo e Estimativa
 
 O algoritmo de cálculo considera:
 ```javascript
@@ -327,46 +287,29 @@ O algoritmo é baseado em estudos científicos sobre:
 ## 👨‍💻 Desenvolvimento
 
 ### Autor
-**[SEU NOME]**
-- GitHub: [@SEU_USUARIO](https://github.com/SEU_USUARIO)
-- LinkedIn: [Seu Perfil](https://linkedin.com/in/seu-perfil)
-- Email: seu@email.com
+**Equipe Vital (João Estevam Fernandes Barbosa & Kauã Henrique Lima da Cruz**
+- GitHub: [joaoestevam700](https://github.com/joaoestevam700)
+- LinkedIn: [João Estevam](www.linkedin.com/in/joao-estevam-b05b2b309)
+- Email: joaoestevan8@email.com
 
 ### Licença
 Este projeto está sob a licença **MIT**. Veja o arquivo `LICENSE` para mais detalhes.
 ```
 MIT License
 
-Copyright (c) 2024 [SEU NOME]
+Copyright (c) 2024 [João Estevam Fernandes Barbosa & Kauã Henrique Lima da Cruz]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction...
 ```
 
----
-
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Para contribuir:
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-### Diretrizes
-- Mantenha o código limpo e documentado
-- Siga o design system existente
-- Teste em múltiplos navegadores
-- Garanta acessibilidade (WCAG 2.1 AA)
 
 ---
 
 ## 🐛 Reportar Bugs
 
-Encontrou um bug? Abra uma [issue](https://github.com/SEU_USUARIO/vitalclock/issues) com:
+Encontrou um bug? Abra uma [issue](https://github.com/joaoestevam700/vitalclock/issues) com:
 - Descrição detalhada do problema
 - Passos para reproduzir
 - Navegador e versão
@@ -397,9 +340,9 @@ Encontrou um bug? Abra uma [issue](https://github.com/SEU_USUARIO/vitalclock/iss
 
 ## 📞 Contato e Suporte
 
-- **Email**: suporte@vitalclock.com (fictício)
-- **Discord**: [Comunidade VitalClock](#)
-- **Twitter**: [@vitalclock](#)
+- **Email**: Em Breve
+- **Discord**: [Comunidade VitalClock](#) Em Breve
+- **Twitter**: [@vitalclock](#) Em Breve
 
 ---
 
@@ -476,7 +419,7 @@ O VitalClock contribui para:
 
 ## 📄 Changelog
 
-### v1.0.0 (2024-01-15)
+### v1.0.0 (2025-22-10)
 - ✅ Lançamento inicial
 - ✅ Sistema de login/cadastro
 - ✅ Questionário completo
