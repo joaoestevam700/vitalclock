@@ -340,9 +340,9 @@ Encontrou um bug? Abra uma [issue](https://github.com/joaoestevam700/vitalclock/
 
 ## 📞 Contato e Suporte
 
-- **Email**: Em Breve
-- **Discord**: [Comunidade VitalClock](#) Em Breve
-- **Twitter**: [@vitalclock](#) Em Breve
+- **Email**: vitalclocksuporte@gmail.com
+- **Discord**: [Comunidade VitalClock](https://discord.com/invite/HYv92rV5)
+- **Twitter**: [@VitalClockCorp](https://x.com/VitalClockCorp?s=08)
 
 ---
 
@@ -350,7 +350,7 @@ Encontrou um bug? Abra uma [issue](https://github.com/joaoestevam700/vitalclock/
 
 Se o VitalClock foi útil para você:
 - ⭐ Dê uma estrela no GitHub
-- 🐦 Compartilhe no Twitter
+- 🐦 Compartilhe no Twitter e nos mencione!
 - 💼 Compartilhe no LinkedIn
 - 👥 Indique para amigos e família
 
