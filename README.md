@@ -288,9 +288,9 @@ O algoritmo é baseado em estudos científicos sobre:
 
 ### Autor
 **Equipe Vital (João Estevam Fernandes Barbosa & Kauã Henrique Lima da Cruz**
-- GitHub: [joaoestevam700](https://github.com/joaoestevam700)
-- LinkedIn: [João Estevam](https://www.linkedin.com/in/jo%C3%A3o-estevam-b05b2b309/)
-- Email: joaoestevan8@email.com
+- GitHub: [joaoestevam700](https://github.com/joaoestevam700) & [kauahl] (https://github.com/kauahl)
+- LinkedIn: [João Estevam](https://www.linkedin.com/in/jo%C3%A3o-estevam-b05b2b309/) & [Kauã Henrique] (https://www.linkedin.com/in/kau%C3%A3-henrique-lima-da-cruz-02ba7a309/)
+- Email: joaoestevan8@email.com & kauahlcruz@gmail.com
 
 ### Licença
 Este projeto está sob a licença **MIT**.
